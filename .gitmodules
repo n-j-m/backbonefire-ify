@@ -1,0 +1,3 @@
+[submodule "backbonefire"]
+	path = backbonefire
+	url = https://github.com/firebase/backbonefire.git
