@@ -781,5 +781,5 @@
 
 
 
-  return BackboneFirebase;
+  return Backbone.Firebase;
 }));
