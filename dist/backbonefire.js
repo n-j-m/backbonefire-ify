@@ -25,7 +25,7 @@
 
   'use strict';
 
-  Backbone.Firebase = {};
+  BackboneFirebase = {};
 
   /**
    * A utility for retrieving the key name of a Firebase ref or
@@ -34,7 +34,7 @@
    * support for Firebase 1.x.x is dropped in BackboneFire, this
    * helper can be removed.
    */
-  Backbone.Firebase._getKey = function(refOrSnapshot) {
+  BackboneFirebase._getKey = function(refOrSnapshot) {
     return (typeof refOrSnapshot.key === 'function') ? refOrSnapshot.key() : refOrSnapshot.name();
   };
 
@@ -42,7 +42,7 @@
    * A utility for resolving whether an item will have the autoSync
    * property. Models can have this property on the prototype.
    */
-  Backbone.Firebase._determineAutoSync = function(model, options) {
+  BackboneFirebase._determineAutoSync = function(model, options) {
     var proto = Object.getPrototypeOf(model);
     return _.extend(
       {
@@ -60,12 +60,12 @@
    * and the trigering of the appropiate methods. While sync can be overwritten
    * to handle updates to Firebase.
    */
-  Backbone.Firebase.sync = function(method, model, options) {
+  BackboneFirebase.sync = function(method, model, options) {
     var modelJSON = model.toJSON();
 
     if (method === 'read') {
 
-      Backbone.Firebase._readOnce(model.firebase, function onComplete(snap) {
+      BackboneFirebase._readOnce(model.firebase, function onComplete(snap) {
         var resp = snap.val();
         if(options.success) {
           options.success(resp);
@@ -78,15 +78,15 @@
 
     } else if (method === 'create') {
 
-      Backbone.Firebase._setWithCheck(model.firebase, modelJSON, options);
+      BackboneFirebase._setWithCheck(model.firebase, modelJSON, options);
 
     } else if (method === 'update') {
 
-      Backbone.Firebase._updateWithCheck(model.firebase, modelJSON, options);
+      BackboneFirebase._updateWithCheck(model.firebase, modelJSON, options);
 
     } else if(method === 'delete') {
 
-      Backbone.Firebase._setWithCheck(model.firebase, null, options);
+      BackboneFirebase._setWithCheck(model.firebase, null, options);
 
     }
 
@@ -95,14 +95,14 @@
   /**
    * A utility for a one-time read from Firebase.
    */
-  Backbone.Firebase._readOnce = function(ref, onComplete) {
+  BackboneFirebase._readOnce = function(ref, onComplete) {
     ref.once('value', onComplete);
   };
 
   /**
    * A utility for a destructive save to Firebase.
    */
-  Backbone.Firebase._setToFirebase = function(ref, item, onComplete) {
+  BackboneFirebase._setToFirebase = function(ref, item, onComplete) {
     ref.set(item, onComplete);
   };
 
@@ -110,7 +110,7 @@
   /**
    * A utility for a non-destructive save to Firebase.
    */
-  Backbone.Firebase._updateToFirebase = function(ref, item, onComplete) {
+  BackboneFirebase._updateToFirebase = function(ref, item, onComplete) {
     ref.update(item, onComplete);
   };
 
@@ -118,7 +118,7 @@
    * A utility for success and error events that are called after updates
    * from Firebase.
    */
-  Backbone.Firebase._onCompleteCheck = function(err, item, options) {
+  BackboneFirebase._onCompleteCheck = function(err, item, options) {
     if(!options) { return; }
 
     if(err && options.error) {
@@ -132,9 +132,9 @@
    * A utility for a destructive save to Firebase that handles success and
    * error events from the server.
    */
-  Backbone.Firebase._setWithCheck = function(ref, item, options) {
-    Backbone.Firebase._setToFirebase(ref, item, function(err) {
-      Backbone.Firebase._onCompleteCheck(err, item, options);
+  BackboneFirebase._setWithCheck = function(ref, item, options) {
+    BackboneFirebase._setToFirebase(ref, item, function(err) {
+      BackboneFirebase._onCompleteCheck(err, item, options);
     });
   };
 
@@ -142,16 +142,16 @@
    * A utility for a non-destructive save to Firebase that handles success and
    * error events from the server.
    */
-  Backbone.Firebase._updateWithCheck = function(ref, item, options) {
-    Backbone.Firebase._updateToFirebase(ref, item, function(err) {
-      Backbone.Firebase._onCompleteCheck(err, item, options);
+  BackboneFirebase._updateWithCheck = function(ref, item, options) {
+    BackboneFirebase._updateToFirebase(ref, item, function(err) {
+      BackboneFirebase._onCompleteCheck(err, item, options);
     });
   };
 
   /**
    * A utility for throwing errors.
    */
-  Backbone.Firebase._throwError = function(message) {
+  BackboneFirebase._throwError = function(message) {
     throw new Error(message);
   };
 
@@ -162,14 +162,14 @@
    *    string - return new Firebase('')
    *    object - assume object is ref and return
    */
-  Backbone.Firebase._determineRef = function(objOrString) {
+  BackboneFirebase._determineRef = function(objOrString) {
     switch (typeof(objOrString)) {
     case 'string':
       return new Firebase(objOrString);
     case 'object':
       return objOrString;
     default:
-      Backbone.Firebase._throwError('Invalid type passed to url property');
+      BackboneFirebase._throwError('Invalid type passed to url property');
     }
   };
 
@@ -179,12 +179,12 @@
    *    primitive - Throw error, primitives cannot be synced
    *    null      - Create blank object and assign id
    */
-  Backbone.Firebase._checkId = function(snap) {
+  BackboneFirebase._checkId = function(snap) {
     var model = snap.val();
 
     // if the model is a primitive throw an error
-    if (Backbone.Firebase._isPrimitive(model)) {
-      Backbone.Firebase._throwError('InvalidIdException: Models must have an Id. Note: You may ' +
+    if (BackboneFirebase._isPrimitive(model)) {
+      BackboneFirebase._throwError('InvalidIdException: Models must have an Id. Note: You may ' +
       'be trying to sync a primitive value (int, string, bool).');
     }
 
@@ -195,7 +195,7 @@
     }
 
     // set the id to the snapshot's key
-    model.id = Backbone.Firebase._getKey(snap);
+    model.id = BackboneFirebase._getKey(snap);
 
     return model;
   };
@@ -203,14 +203,14 @@
   /**
    * A utility for checking if a value is a primitive
    */
-  Backbone.Firebase._isPrimitive = function(value) {
+  BackboneFirebase._isPrimitive = function(value) {
     // is the value not an object and not null (basically, is it a primitive?)
     return !_.isObject(value) && value !== null;
   };
 
   /**
    * Model responsible for autoSynced objects
-   * This model is never directly used. The Backbone.Firebase.Model will
+   * This model is never directly used. The BackboneFirebase.Model will
    * inherit from this if it is an autoSynced model
    */
   var SyncModel = (function() {
@@ -240,7 +240,7 @@
       },
       sync: function(method, model, options) {
         if(method === 'delete') {
-          Backbone.Firebase.sync(method, model, options);
+          BackboneFirebase.sync(method, model, options);
         } else {
           console.warn('Sync called on a Fireabse model with autoSync enabled, ignoring.');
         }
@@ -252,7 +252,7 @@
 
   /**
    * Model responsible for one-time requests
-   * This model is never directly used. The Backbone.Firebase.Model will
+   * This model is never directly used. The BackboneFirebase.Model will
    * inherit from this if it is an autoSynced model
    */
   var OnceModel = (function() {
@@ -270,7 +270,7 @@
     OnceModel.protoype = {
 
       sync: function(method, model, options) {
-        Backbone.Firebase.sync(method, model, options);
+        BackboneFirebase.sync(method, model, options);
       }
 
     };
@@ -278,7 +278,7 @@
     return OnceModel;
   }());
 
-  Backbone.Firebase.Model = Backbone.Model.extend({
+  BackboneFirebase.Model = Backbone.Model.extend({
 
     // Determine whether the realtime or once methods apply
     constructor: function(model, options) {
@@ -290,20 +290,20 @@
         this.set(_.defaults(this.toJSON(), defaults));
       });
 
-      this.autoSync = Backbone.Firebase._determineAutoSync(this, options);
+      this.autoSync = BackboneFirebase._determineAutoSync(this, options);
 
       switch (typeof this.url) {
       case 'string':
-        this.firebase = Backbone.Firebase._determineRef(this.url);
+        this.firebase = BackboneFirebase._determineRef(this.url);
         break;
       case 'function':
-        this.firebase = Backbone.Firebase._determineRef(this.url());
+        this.firebase = BackboneFirebase._determineRef(this.url());
         break;
       case 'object':
-        this.firebase = Backbone.Firebase._determineRef(this.url);
+        this.firebase = BackboneFirebase._determineRef(this.url);
         break;
       default:
-        Backbone.Firebase._throwError('url parameter required');
+        BackboneFirebase._throwError('url parameter required');
       }
 
       if(!this.autoSync) {
@@ -323,7 +323,7 @@
     _setId: function(snap) {
       // if the item new set the name to the id
       if(this.isNew()) {
-        this.set('id', Backbone.Firebase._getKey(snap), { silent: true });
+        this.set('id', BackboneFirebase._getKey(snap), { silent: true });
       }
     },
 
@@ -340,7 +340,7 @@
      * by comparing the keys that have been removed.
      */
     _unsetAttributes: function(snap) {
-      var newModel = Backbone.Firebase._checkId(snap);
+      var newModel = BackboneFirebase._checkId(snap);
 
       if (typeof newModel === 'object' && newModel !== null) {
         var diff = _.difference(_.keys(this.attributes), _.keys(newModel));
@@ -399,28 +399,28 @@
       /**
        * Create an id from a Firebase push-id and call Backbone.create, which
        * will do prepare the models and trigger the proper events and then call
-       * Backbone.Firebase.sync with the correct method.
+       * BackboneFirebase.sync with the correct method.
        */
       create: function(model, options) {
-        model.id = Backbone.Firebase._getKey(this.firebase.push());
+        model.id = BackboneFirebase._getKey(this.firebase.push());
         options = _.extend({ autoSync: false }, options);
         return Backbone.Collection.prototype.create.apply(this, [model, options]);
       },
       /**
        * Create an id from a Firebase push-id and call Backbone.add, which
        * will do prepare the models and trigger the proper events and then call
-       * Backbone.Firebase.sync with the correct method.
+       * BackboneFirebase.sync with the correct method.
        */
       add: function(model, options) {
-        model.id = Backbone.Firebase._getKey(this.firebase.push());
+        model.id = BackboneFirebase._getKey(this.firebase.push());
         options = _.extend({ autoSync: false }, options);
         return Backbone.Collection.prototype.add.apply(this, [model, options]);
       },
       /**
-       * Proxy to Backbone.Firebase.sync
+       * Proxy to BackboneFirebase.sync
        */
       sync: function(method, model, options) {
-        Backbone.Firebase.sync(method, model, options);
+        BackboneFirebase.sync(method, model, options);
       },
       /**
        * Firebase returns lists as an object with keys, where Backbone
@@ -523,7 +523,7 @@
           if (options.silent === true) {
             this._suppressEvent = true;
           }
-          Backbone.Firebase._setWithCheck(childRef, null, options);
+          BackboneFirebase._setWithCheck(childRef, null, options);
         }
 
         return parsed;
@@ -559,7 +559,7 @@
           var model = models[i];
 
           if (!model.id) {
-            model.id = Backbone.Firebase._getKey(this.firebase.push());
+            model.id = BackboneFirebase._getKey(this.firebase.push());
           }
 
           // call Backbone's prepareModel to apply options
@@ -579,7 +579,7 @@
       },
 
       _childAdded: function(snap) {
-        var model = Backbone.Firebase._checkId(snap);
+        var model = BackboneFirebase._checkId(snap);
 
         if (this._suppressEvent === true) {
           this._suppressEvent = false;
@@ -598,7 +598,7 @@
       // when a model has changed remotely find differences between the
       // local and remote data and apply them to the local model
       _childChanged: function(snap) {
-        var model = Backbone.Firebase._checkId(snap);
+        var model = BackboneFirebase._checkId(snap);
 
         var item = _.find(this.models, function(child) {
           return child.id == model.id;
@@ -630,7 +630,7 @@
       // remove an item from the collection when removed remotely
       // provides the ability to remove siliently
       _childRemoved: function(snap) {
-        var model = Backbone.Firebase._checkId(snap);
+        var model = BackboneFirebase._checkId(snap);
 
         if (this._suppressEvent === true) {
           this._suppressEvent = false;
@@ -713,7 +713,7 @@
         options.success =
           _.isFunction(options.success) ? options.success : function() {};
         var childRef = this.firebase.child(model.id);
-        Backbone.Firebase._setWithCheck(childRef, null, _.bind(options.success, model));
+        BackboneFirebase._setWithCheck(childRef, null, _.bind(options.success, model));
       },
 
       _preventSync: function(model, state) {
@@ -724,23 +724,23 @@
     return SyncCollection;
   }());
 
-  Backbone.Firebase.Collection = Backbone.Collection.extend({
+  BackboneFirebase.Collection = Backbone.Collection.extend({
 
     constructor: function (model, options) {
       Backbone.Collection.apply(this, arguments);
       var self = this;
       var BaseModel = self.model;
-      this.autoSync = Backbone.Firebase._determineAutoSync(this, options);
+      this.autoSync = BackboneFirebase._determineAutoSync(this, options);
 
       switch (typeof this.url) {
       case 'string':
-        this.firebase = Backbone.Firebase._determineRef(this.url);
+        this.firebase = BackboneFirebase._determineRef(this.url);
         break;
       case 'function':
-        this.firebase = Backbone.Firebase._determineRef(this.url());
+        this.firebase = BackboneFirebase._determineRef(this.url());
         break;
       case 'object':
-        this.firebase = Backbone.Firebase._determineRef(this.url);
+        this.firebase = BackboneFirebase._determineRef(this.url);
         break;
       default:
         throw new Error('url parameter required');
@@ -765,9 +765,9 @@
         var newItem = new BaseModel(attrs, opts);
         newItem.autoSync = false;
         newItem.firebase = self.firebase.child(newItem.id);
-        newItem.sync = Backbone.Firebase.sync;
+        newItem.sync = BackboneFirebase.sync;
         newItem.on('change', function(model) {
-          var updated = Backbone.Firebase.Model.prototype._updateModel(model);
+          var updated = BackboneFirebase.Model.prototype._updateModel(model);
           model.set(updated, { silent: true });
         });
 
@@ -781,5 +781,5 @@
 
 
 
-  return Backbone.Firebase;
+  return BackboneFirebase;
 }));

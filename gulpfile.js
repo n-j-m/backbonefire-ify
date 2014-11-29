@@ -18,6 +18,7 @@ gulp.task('build', function() {
   return gulp.src(paths.backfire)
     .pipe(replace('(function(_, Backbone) {', ''))
     .pipe(replace('})(window._, window.Backbone);', ''))
+    .pipe(replace('Backbone.Firebase', 'BackboneFirebase'))
     .pipe(insert.wrap(headerText, footerText))
     .pipe(gulp.dest(paths.dist));
 
