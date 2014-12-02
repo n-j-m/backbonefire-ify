@@ -4,16 +4,30 @@
   "description": "CommonJS version of BackFire library",
   "main": "dist/backbonefire.js",
   "scripts": {
-    "test": "mochify"
+    "test": "mochify --watch --plugin proxyquireify/plugin --reporter spec"
   },
   "author": "Nick Moore",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/n-j-m/backbonefire-ify"
+  },
+  "keywords": [
+    "backbone",
+    "firebase",
+    "backbonefire",
+    "browserify",
+    "backfire"
+  ],
   "license": "MIT",
   "devDependencies": {
+    "browserify": "^6.3.3",
+    "chai": "^1.10.0",
     "gulp": "^3.8.10",
     "gulp-insert": "^0.4.0",
     "gulp-replace": "^0.5.0",
-    "chai": "^1.10.0",
     "mochify": "^2.0.0",
+    "mockfirebase": "^0.5.1",
+    "proxyquireify": "^1.1.0",
     "sinon": "^1.12.1"
   },
   "dependencies": {

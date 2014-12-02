@@ -1,7 +1,7 @@
 /**
  * Backbone Firebase Adapter.
  */
-(function (win, factory) {
+(function (root, factory) {
   if (typeof module === 'object' && typeof exports === 'object' && exports === module.exports) {
     module.exports = factory(require('underscore'), require('backbone'), require('firebase'));
   }
@@ -9,7 +9,7 @@
     define(['underscore', 'backbone', 'firebase'], factory);
   }
   else {
-    win.Backbone.Firebase = factory(win._, win.Backbone, win.Firebase);
+    root.Backbone.Firebase = factory(root._, root.Backbone, root.Firebase);
   }
 }(this, function(_, Backbone, Firebase) {
 /*!
